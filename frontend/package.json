@@ -1,0 +1,9 @@
+{
+  "name": "proud-citizen-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "react-scripts test",
+    "lint": "eslint ."
+  }
+}
