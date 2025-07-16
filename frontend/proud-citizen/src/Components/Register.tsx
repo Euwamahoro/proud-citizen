@@ -81,7 +81,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
           <div className="login-icon">
             <User />
           </div>
-          <h2 className="login-title">Join Proud-Citizen</h2>
+          <h2 className="login-title">Join Proud-Citizen Community</h2>
           <p className="login-subtitle">Create your account to get started</p>
         </div>
 
