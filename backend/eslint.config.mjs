@@ -1,21 +1,11 @@
-import globals from 'globals';
-import js from '@eslint/js';
+import js from "@eslint/js";
+import globals from "globals";
+import { defineConfig } from "eslint/config";
 
-export default [
-  js.configs.recommended,
 
-  {
-    files: ['**/*.js'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'commonjs',
-      globals: {
-        ...globals.node, 
-      },
-    },
-    // You can add custom rules here if needed
-    // rules: {
-    //   "semi": ["error", "always"]
-    // }
-  }
-];
+export default defineConfig([
+  { files: ["**/*.{js,mjs,cjs,jsx}"], plugins: { js }, extends: ["js/recommended"] },
+  { files: ["**/*.js"], languageOptions: { sourceType: "commonjs" } },
+  { files: ["**/*.{js,mjs,cjs,jsx}"], languageOptions: { globals: globals.node } },
+  pluginReact.configs.flat.recommended,
+]);
