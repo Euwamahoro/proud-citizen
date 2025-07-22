@@ -1,24 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, User, Lock } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import './Styles/LoginPage.css';
+import { login } from '../Services/authService';
+import { loginStart, loginSuccess, loginFailure, clearError } from '../Store/authSlice';
+import type { RootState } from '../Store/index';
 
 export interface LoginFormData {
-  username: string;
+  email: string;
   password: string;
 }
 
-interface LoginPageProps {
-  onSwitchToRegister?: () => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
+const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState<LoginFormData>({
-    username: '',
+    email: '', 
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<LoginFormData>>({});
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+
+  // Clear error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        dispatch(clearError());
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, dispatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,14 +40,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
     if (errors[name as keyof LoginFormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (error) {
+      dispatch(clearError());
+    }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Partial<LoginFormData> = {};
-    if (!formData.username.trim()) newErrors.username = 'Username is required';
-    else if (formData.username.length < 3) newErrors.username = 'Username must be at least 3 characters';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Please enter a valid email';
     if (!formData.password) newErrors.password = 'Password is required';
-    else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -41,8 +57,30 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000);
+    
+    dispatch(loginStart());
+    
+    try {
+      const { token } = await login({
+        email: formData.email,
+        password: formData.password
+      });
+      
+      dispatch(loginSuccess({ token, email: formData.email }));
+      setFormData({ email: '', password: '' });
+      navigate('/dashboard');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      dispatch(loginFailure(errorMessage));
+    }
+  };
+
+  const handleRegisterRedirect = () => {
+    navigate("/register" );
+  };
+
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
   };
 
   return (
@@ -50,28 +88,35 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
       <div className="login-card">
         <div className="login-header">
           <div className="login-icon">
-            <User />
+            <User size={24} />
           </div>
           <h2 className="login-title">Welcome Back</h2>
           <p className="login-subtitle">Sign in to your account</p>
         </div>
 
+        {error && (
+          <div className="notification error">
+            {error}
+          </div>
+        )}
+
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username" className="form-label">Username</label>
+            <label htmlFor="email" className="form-label">Email</label>
             <div className="input-wrapper">
               <User className="input-icon" size={20} />
               <input
-                id="username"
-                name="username"
-                type="text"
-                value={formData.username}
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
                 onChange={handleInputChange}
-                className={`form-input ${errors.username ? 'error' : ''}`}
-                placeholder="Enter your username"
+                className={`form-input ${errors.email ? 'error' : ''}`}
+                placeholder="Enter your email"
+                autoComplete="username"
               />
             </div>
-            {errors.username && <span className="error-message">{errors.username}</span>}
+            {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
           <div className="form-group">
@@ -86,12 +131,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
                 onChange={handleInputChange}
                 className={`form-input ${errors.password ? 'error' : ''}`}
                 placeholder="Enter your password"
+                autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="input-icon"
                 style={{ left: 'auto', right: '12px' }}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -101,20 +148,24 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
 
           <div className="remember-forgot">
             <label className="remember-me">
-              <input type="checkbox" />
+              <input type="checkbox" id="remember" />
               <span>Remember me</span>
             </label>
-            <button type="button" className="forgot-password">
+            <button 
+              type="button" 
+              className="forgot-password"
+              onClick={handleForgotPassword}
+            >
               Forgot password?
             </button>
           </div>
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={loading}
             className="submit-button"
           >
-            {isLoading ? (
+            {loading ? (
               <>
                 <svg className="spinner" width="20" height="20" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="4" opacity="0.25"></circle>
@@ -128,7 +179,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
 
         <div className="switch-action">
           Don't have an account?{' '}
-          <button onClick={onSwitchToRegister} className="switch-link">
+          <button 
+            onClick={handleRegisterRedirect} 
+            className="switch-link"
+            disabled={loading}
+          >
             Create one here
           </button>
         </div>

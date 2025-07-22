@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
-import './Styles/LoginPage.css'; // Reusing the same CSS file
+import './Styles/LoginPage.css';
+import { register, storeToken } from '../Services/authService';
 
 interface RegisterFormData {
   username: string;
@@ -11,6 +12,7 @@ interface RegisterFormData {
 
 interface RegisterPageProps {
   onSwitchToLogin?: () => void;
+  onRegisterSuccess?: () => void;
 }
 
 const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
@@ -25,6 +27,10 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<RegisterFormData>>({});
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: 'success' | 'error';
+  } | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,6 +38,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
     if (errors[name as keyof RegisterFormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (notification) setNotification(null);
   };
 
   const validateForm = (): boolean => {
@@ -70,8 +77,45 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000);
+    setNotification(null);
+    
+    try {
+      const response = await register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      });
+      
+      // Clear form on success
+      setFormData({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      });
+      setAcceptedTerms(false);
+      
+      // Show success notification
+      setNotification({
+        message: response.msg || 'Registration successful! You can now login.',
+        type: 'success'
+      });
+      
+      // Store token if needed
+      if (response.token) {
+        storeToken(response.token);
+      }
+      
+    } catch (error) {
+      setNotification({
+        message: error instanceof Error ? error.message : 'Registration failed',
+        type: 'error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -85,6 +129,20 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
           <p className="login-subtitle">Create your account to get started</p>
         </div>
 
+        {notification && (
+          <div className={`notification ${notification.type}`}>
+            {notification.message}
+            {notification.type === 'success' && (
+              <button 
+                onClick={() => setNotification(null)} 
+                className="notification-close"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        )}
+
         <form className="login-form" onSubmit={handleSubmit}>
           {/* Username Field */}
           <div className="form-group">
@@ -97,7 +155,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
                 type="text"
                 value={formData.username}
                 onChange={handleInputChange}
-                className="form-input"
+                className={`form-input ${errors.username ? 'error' : ''}`}
                 placeholder="Choose a username"
               />
             </div>
@@ -115,7 +173,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="form-input"
+                className={`form-input ${errors.email ? 'error' : ''}`}
                 placeholder="john@example.com"
               />
             </div>
@@ -133,7 +191,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={handleInputChange}
-                className="form-input"
+                className={`form-input ${errors.password ? 'error' : ''}`}
                 placeholder="Create a strong password"
               />
               <button
@@ -159,7 +217,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className="form-input"
+                className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
                 placeholder="Confirm your password"
               />
               <button
