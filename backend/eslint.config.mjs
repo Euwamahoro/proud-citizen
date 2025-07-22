@@ -12,10 +12,13 @@ export default defineConfig([
     files: ["**/*.js"], 
     languageOptions: { 
       sourceType: "commonjs",
-      globals: {
-        ...globals.node,
-        ...globals.browser
-      }
+      globals: globals.node  // Changed from globals.browser to globals.node
+    } 
+  },
+  { 
+    files: ["**/*.{js,mjs,cjs}"], 
+    languageOptions: { 
+      globals: globals.node  // Changed from globals.browser to globals.node
     } 
   },
 ]);
