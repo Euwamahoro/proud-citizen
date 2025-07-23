@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import './Styles/LoginPage.css';
+import { useNavigate } from 'react-router-dom';
 import { register, storeToken } from '../Services/authService';
 
 interface RegisterFormData {
@@ -15,13 +16,14 @@ interface RegisterPageProps {
   onRegisterSuccess?: () => void;
 }
 
-const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
+const RegisterPage: React.FC<RegisterPageProps> = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -72,6 +74,10 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0 && acceptedTerms;
+  };
+
+  const handleLoginRedirect = () => {
+    navigate("/login" );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -274,7 +280,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) => {
         {/* Switch to Login */}
         <div className="switch-action">
           Already have an account?{' '}
-          <button onClick={onSwitchToLogin} className="switch-link" style={{ background: 'none', border: 'none', padding: 0 }}>
+          <button onClick={handleLoginRedirect} className="switch-link" style={{ background: 'none', border: 'none', padding: 0 }}>
             Sign in here
           </button>
         </div>

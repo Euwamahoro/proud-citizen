@@ -1,6 +1,7 @@
- develop
-/node_modules
-
-/node_modules
+node_modules
 .env
- main
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore

@@ -1,0 +1,53 @@
+# Ignore dependencies, as they are installed inside the container
+node_modules
+
+# Ignore local environment files
+.env
+
+# Ignore Vite cache and build output (from local builds)
+dist
+.vite
+
+# Ignore version control files
+.git
+.gitignore
+
+# Ignore Docker files
+Dockerfile
+.dockerignore```
+
+---
+
+### Task 3: Update `docker-compose.yml` to run both services
+
+Now, we need to tell Docker Compose about our new `frontend` service and how it should run alongside the `backend`.
+
+**Action:**
+
+1.  Open the `docker-compose.yml` file in your **project's root directory**.
+2.  **Replace its entire content** with the following configuration:
+
+```yaml
+# You can remove the version line as it's obsolete
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    container_name: proud-citizen-backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      # Map port 8080 on your machine to port 80 in the container
+      - "8080:80"
+    container_name: proud-citizen-frontend
+    # This ensures the backend is started before the frontend
+    depends_on:
+      - backend
