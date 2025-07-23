@@ -55,9 +55,9 @@ resource "azurerm_container_app" "backend" {
   template {
     container {
       name   = "backend-container"
-      image  = "proudcitizenacr.azurecr.io/backend:1.0.0"
-      cpu    = 0.25
-      memory = "0.5Gi"
+      image  = "proudcitizenacr.azurecr.io/backend:1.0.1"
+      cpu    = 1.0
+      memory = "2Gi"
 
       env {
         name        = "MONGO_URI"
@@ -76,12 +76,20 @@ resource "azurerm_container_app" "backend" {
         transport = "HTTP"
         port      = 5000
         path      = "/healthz"
+        initial_delay = 30
+        timeout     = 5
       }
 
+       startup_probe {
+        transport = "HTTP"
+        path        = "/healthz"
+        port        = 5000
+      }
       readiness_probe {
         transport = "HTTP"
         port      = 5000
         path      = "/readyz"
+        timeout     = 5
       }
     }
 
@@ -92,7 +100,7 @@ resource "azurerm_container_app" "backend" {
   ingress {
     target_port      = 5000
     transport        = "http"
-    external_enabled = false
+    external_enabled = true
 
     traffic_weight {
       percentage      = 100

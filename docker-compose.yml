@@ -18,3 +18,4 @@ services:
     container_name: proud-citizen-frontend
     depends_on:
       - backend
+    # Ensure no command or entrypoint overrides exist

@@ -9,6 +9,14 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+
+  
+  "build": {
+    "outDir": "dist",
+    "emptyOutDir": true,
+    "sourcemap": false
+  },
+
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "@types/react-router-dom": "^5.3.3",

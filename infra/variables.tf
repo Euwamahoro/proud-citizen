@@ -1,7 +1,7 @@
 variable "location" {
   type        = string
   description = "The Azure region to deploy resources"
-  default     = "eastus" # Lowercase for consistency with Azure's naming
+  default     = "eastus2" # Lowercase for consistency with Azure's naming
 }
 
 variable "project_name" {
