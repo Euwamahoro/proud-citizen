@@ -40,3 +40,34 @@ A virtual platform connecting Rwandan youth with elders to preserve and share na
    ```bash
    git clone https://github.com/Euwamahoro/proud-citizen.git
    cd proud-citizen
+
+### 🐳 Docker-Based Local Setup
+
+This is the recommended way to run the project locally.
+
+#### Prerequisites
+- Docker
+- Docker Compose
+
+#### Running the Application
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Euwamahoro/proud-citizen.git
+    cd proud-citizen
+    ```
+
+2.  **Set up Environment Variables:**
+    Create a `.env` file in the root of the project and add the following, filling in your actual values:
+    ```
+    # Backend environment variables
+    MONGO_URI=your_mongodb_connection_string
+    JWT_SECRET=your_super_secret_key_for_jwt
+    PORT=5000
+    ```
+
+3.  **Build and Run with Docker Compose:**
+    From the root directory, run:
+    ```bash
+    docker-compose up --build
+    ```
+    The frontend will be available at `http://localhost:3000` and the backend at `http://localhost:5000`.
