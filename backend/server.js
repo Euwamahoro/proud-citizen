@@ -1,5 +1,4 @@
 const express = require('express');
-const connectDB = require('./db');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -66,9 +65,9 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Error Handling Middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error(`[${new Date().toISOString()}] Error:`, err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Internal Server Error',
     timestamp: new Date().toISOString()
   });
