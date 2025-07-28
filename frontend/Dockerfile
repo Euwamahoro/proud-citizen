@@ -7,6 +7,9 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Production stage (Nginx)
 FROM nginx:alpine
 # Remove default Nginx config
