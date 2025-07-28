@@ -1,5 +1,8 @@
 name: CI Pipeline
-on: [pull_request]
+
+on:
+  pull_request:
+    branches: [ "develop" ]
 
 jobs:
   backend-checks:
@@ -15,6 +18,9 @@ jobs:
         working-directory: ./backend
       - run: npm test
         working-directory: ./backend
+      - name: Dependency Scan
+        run: npm audit --production
+        working-directory: ./backend
 
   frontend-checks:
     runs-on: ubuntu-latest
@@ -26,5 +32,10 @@ jobs:
           node-version: 18
       - run: npm install
         working-directory: ./frontend
+      - run: npm run build
+        working-directory: ./frontend
       - run: npm run lint
+        working-directory: ./frontend
+      - name: Dependency Scan
+        run: npm audit --production
         working-directory: ./frontend
