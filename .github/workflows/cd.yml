@@ -117,13 +117,13 @@ jobs:
           trivy image --exit-code 1 --severity CRITICAL ${{ env.ACR_NAME }}.azurecr.io/proud-citizen-backend:${{ github.sha }}
 
       # Deploy to Azure Container Apps
+
       - name: Deploy Frontend
         run: |
           az containerapp update \
             --name ${{ env.FRONTEND_APP }} \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --image ${{ env.ACR_NAME }}.azurecr.io/proud-citizen-frontend:${{ github.sha }} \
-            --registry-server ${{ env.ACR_NAME }}.azurecr.io \
             --query properties.configuration.ingress.fqdn
 
       - name: Deploy Backend
@@ -131,5 +131,4 @@ jobs:
           az containerapp update \
             --name ${{ env.BACKEND_APP }} \
             --resource-group ${{ env.RESOURCE_GROUP }} \
-            --image ${{ env.ACR_NAME }}.azurecr.io/proud-citizen-backend:${{ github.sha }} \
-            --registry-server ${{ env.ACR_NAME }}.azurecr.io
+            --image ${{ env.ACR_NAME }}.azurecr.io/proud-citizen-backend:${{ github.sha }}
