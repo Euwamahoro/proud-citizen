@@ -88,23 +88,20 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Error Handling Middleware
-app.use((err, req, res, _next) => {
+app.use((err, req, res, next) => {
   // Handle CORS errors specifically
   if (err && err.message && err.message.includes('CORS')) {
     return res.status(403).json({ error: err.message });
   }
 
-  // Log the full error for debugging
-  console.error(`[${new Date().toISOString()}] Error:`, {
-    message: err?.message || 'No error message',
-    stack: err?.stack || 'No stack trace',
-    name: err?.name || 'Unknown error'
-  });
-
+  console.error(`[${new Date().toISOString()}] Error:`, err.stack);
   res.status(500).json({
     error: 'Internal Server Error',
     timestamp: new Date().toISOString()
   });
+  
+  // ESLint ignore for unused 'next' parameter
+  // eslint-disable-next-line no-unused-vars
 });
 
 // --- Routes ---
