@@ -3,6 +3,16 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+// Validate required environment variables
+if (!process.env.MONGO_URI) {
+  console.error('FATAL: MONGO_URI is not defined');
+  process.exit(1);
+}
+
+if (!process.env.FRONTEND_URL) {
+  console.warn('WARNING: FRONTEND_URL is not defined - CORS may be restrictive');
+}
+
 const app = express();
 
 // Health Check Endpoints
@@ -62,17 +72,17 @@ const allowedOrigins = [
   'http://localhost:5173'   // For local dev (Vite)
 ].filter(Boolean); // This ensures no undefined values are in the array
 
-// --- IMPORTANT DEBUGGING STEP ---
+// Log the CORS whitelist for debugging
 console.log('CORS Whitelist - Allowed Origins:', allowedOrigins);
 
 // Create the detailed CORS options object
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (like Postman or curl) or if the origin is in our whitelist
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || (allowedOrigins.length > 0 && allowedOrigins.includes(origin))) {
       callback(null, true);
     } else {
-      callback(new Error('This origin is not allowed by CORS policy.'));
+      callback(new Error(`This origin is not allowed by CORS policy. Origin: ${origin}, Allowed: ${allowedOrigins.join(', ')}`));
     }
   },
   credentials: true,
@@ -86,12 +96,14 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 
-
 // Error Handling Middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   // Handle CORS errors specifically
   if (err && err.message && err.message.includes('CORS')) {
-    return res.status(403).json({ error: err.message });
+    return res.status(403).json({ 
+      error: err.message,
+      timestamp: new Date().toISOString()
+    });
   }
 
   console.error(`[${new Date().toISOString()}] Error:`, err.stack);
@@ -99,9 +111,6 @@ app.use((err, req, res, next) => {
     error: 'Internal Server Error',
     timestamp: new Date().toISOString()
   });
-  
-  // ESLint ignore for unused 'next' parameter
-  // eslint-disable-next-line no-unused-vars
 });
 
 // --- Routes ---
