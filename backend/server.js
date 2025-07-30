@@ -16,7 +16,6 @@ app.get('/healthz', (req, res) => {
 
 app.get('/readyz', async (req, res) => {
   try {
-    // More thorough check than just readyState
     await mongoose.connection.db.admin().ping();
     res.status(200).json({ 
       ready: true,
@@ -54,18 +53,48 @@ const connectWithRetry = (retries = 5, interval = 5000) => {
   });
 };
 
-// Middleware
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-})); 
+// --- Middleware ---
+
+// <-- NEW: Define a list of allowed origins for CORS
+const allowedOrigins = [
+  process.env.FRONTEND_URL, // Will be set in Azure
+  'http://localhost:3000',  // Common port for local React dev
+  'http://localhost:5173'   // Common port for local Vite dev
+].filter(Boolean); // Filters out any falsy values like undefined
+
+// <-- NEW: Create the detailed CORS options object
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like Postman, mobile apps, or curl)
+    if (!origin) return callback(null, true);
+
+    // If the request origin is in our whitelist, allow it
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      // Otherwise, deny the request
+      return callback(new Error('This origin is not allowed by CORS policy.'));
+    }
+  },
+  credentials: true, // <-- CRITICAL: This allows the browser to send credentials
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Keep your existing methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // Keep your existing headers
+};
+
+// <-- UPDATED: Use the new corsOptions object
+app.use(cors(corsOptions)); 
 
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 
+
 // Error Handling Middleware
-app.use((err, req, res) => {
+app.use((err, req, res, next) => { // <-- Fixed: Added 'next' parameter
+  // Handle CORS errors specifically
+  if (err.message.includes('CORS')) {
+    return res.status(403).json({ error: err.message });
+  }
+
   console.error(`[${new Date().toISOString()}] Error:`, err.stack);
   res.status(500).json({
     error: 'Internal Server Error',
@@ -73,7 +102,7 @@ app.use((err, req, res) => {
   });
 });
 
-// Routes
+// --- Routes ---
 app.get('/', (req, res) => res.json({ 
   status: 'API Running',
   version: process.env.npm_package_version,
@@ -82,7 +111,7 @@ app.get('/', (req, res) => res.json({
 
 app.use('/api/auth', require('./routes/auth'));
 
-// Server Initialization
+// --- Server Initialization ---
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
