@@ -1,110 +1,129 @@
-
 # Proud Citizen 🇷🇼
 
-[![ProudCitizen CI/CD Pipeline](https://github.com/Euwamahoro/proud-citizen/actions/workflows/cd.yml/badge.svg)](https://github.com/Euwamahoro/proud-citizen/actions)
+[![CI/CD Pipeline](https://github.com/Euwamahoro/proud-citizen/actions/workflows/cd.yml/badge.svg)](https://github.com/Euwamahoro/proud-citizen/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Security Scan](https://img.shields.io/badge/Security-Trivy%20Scanned-blue)](https://github.com/Euwamahoro/proud-citizen)
 
-A virtual platform connecting Rwandan youth with elders to preserve and share national history, cultural values, and future aspirations.
+A virtual platform connecting Rwandan youth with elders to preserve and share national history, cultural values, and future aspirations through intergenerational dialogue.
 
-## 🌟 Features
+## 🎥 Video Demonstration
 
-- **User Authentication**: Secure signup/login for elders and youth
-- **Discussion Hubs**: Join topic-based virtual communities
-- **Intergenerational Chat**: Real-time messaging between generations
-- **Virtual Workshops**: Scheduled video meetings with elders
-- **Sponsorship System**: Support foundation activities (optional)
+A full demonstration of the CI/CD pipeline and deployment process is available here:  
+**[Link to Video Demonstration](https://go.screenpal.com/watch/cTivYynIyzN)**
 
-## 🛠️ Tech Stack
+## 🌐 Live Production Environment
 
-**Backend**  
-![Node.js](https://img.shields.io/badge/Node.js-43853D?logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?logo=mongodb&logoColor=white)
+| Service | URL | Status |
+|---|---|---|
+| **Frontend** | [proudcitizen-frontend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io](https://proudcitizen-frontend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io) | [![Status](https://img.shields.io/website?down_message=offline&label=live&up_message=online&url=https%3A%2F%2Fproudcitizen-frontend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io)](https://proudcitizen-frontend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io)
+| **Backend** | [proudcitizen-backend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io](https://proudcitizen-backend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io/healthz) | [![Status](https://img.shields.io/website?down_message=offline&label=live&up_message=online&url=https%3A%2F%2Fproudcitizen-backend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io/healthz)](https://proudcitizen-backend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io/healthz)
 
-**Frontend**  
-![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+## 🌟 Key Features
 
-**DevOps & Cloud**  
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)![Azure](https://img.shields.io/badge/Microsoft_Azure-0078D4?logo=microsoft-azure&logoColor=white)
+| Feature | Description |
+|---|---|
+| 🔒 **Secure Authentication** | User registration and login protected by JWT (JSON Web Tokens). |
+| 💬 **Discussion Hubs** | A platform for virtual communities and intergenerational conversations. |
+| ✨ **Modern UI** | A responsive and user-friendly interface built with React and Tailwind CSS. |
+| 🚀 **Automated Deployment**| Fully automated CI/CD pipeline ensures rapid and reliable releases. |
 
-## 🛡️ DevSecOps Integration
+## 🛠️ Tech Stack & Infrastructure
 
-This project integrates security scanning directly into the CI/CD pipeline to ensure the application is secure before it reaches production. Our DevSecOps strategy includes two mandatory checks on every deployment:
+| Category | Technologies |
+|---|---|
+| **Frontend** | React, TypeScript, Tailwind CSS, Vite |
+| **Backend** | Node.js, Express, MongoDB (Mongoose) |
+| **Infrastructure** | Docker, Azure Container Apps, Azure Container Registry, GitHub Actions |
+| **DevSecOps**| `npm audit` (Dependency Scanning), `Trivy` (Container Image Scanning) |
 
-1.  **Dependency Vulnerability Scanning**: The pipeline uses `npm audit --production` to scan the project's dependencies for known vulnerabilities. This prevents insecure third-party packages from being included in the build.
-2.  **Container Image Security Scanning**: After the Docker images are built, the pipeline uses **Trivy** to scan them for vulnerabilities within the base image and application layers. The workflow is configured to fail (`--exit-code 1`) if any `CRITICAL` severity vulnerabilities are discovered, preventing a compromised container from being deployed.
+## 🚀 Deployment Pipeline
 
-**Remediation Example**: During the development of the CD pipeline, a critical vulnerability was detected by `npm audit` in the `form-data` package. The vulnerability was immediately remediated by running `npm audit fix`, and the updated `package-lock.json` was committed to the repository, resolving the issue and allowing the pipeline to proceed. This process demonstrates our commitment to actively identifying and fixing security flaws.
+The pipeline is fully automated, triggered by pull requests and merges to the `develop` and `main` branches.
 
-## 🚀 Local Development
+```mermaid
+graph TD
+    subgraph "Development"
+        A[Push to Feature Branch] --> B(Create Pull Request to `develop`);
+    end
 
-There are two ways to run the project locally. The Docker-based setup is recommended for its consistency and ease of use.
+    subgraph "CI: Pull Request Checks"
+        B --> C{Run CI Pipeline};
+        C --> D[Lint & Test];
+        C --> E[Dependency Scan];
+    end
 
-### 🐳 Docker-Based Setup (Recommended)
+    subgraph "Production Release"
+        F(Merge to `main`) --> G{Run CI/CD Pipeline};
+        G --> H[Build Docker Images];
+        H --> I[Scan Images with Trivy];
+        I --> J[Deploy to Azure];
+        J --> K[Live on Production URLs];
+    end
 
-#### Prerequisites
-- Docker
-- Docker Compose
+    E --> F;
+    D --> F;
+```
 
-#### Running the Application
+## 🛡️ Security Implementation
+
+Security is integrated directly into our CI/CD workflow, preventing vulnerabilities from reaching production.
+
+1.  **Dependency Scanning**: Before any build, `npm audit` scans all Node.js packages for known vulnerabilities.
+2.  **Container Image Scanning**: After building the Docker images, **Trivy** performs a comprehensive scan. The pipeline is configured to fail and halt the deployment if any `CRITICAL` severity vulnerabilities are discovered.
+
+Example Trivy Scan Step from `cd.yml`:
+```yaml
+- name: Scan frontend image
+  run: |
+    trivy image --exit-code 1 --severity CRITICAL ${{ env.ACR_NAME }}.azurecr.io/proud-citizen-frontend:${{ github.sha }}
+```
+
+## 📂 Repository Structure
+```
+proud-citizen/
+├── .github/
+│   └── workflows/
+│       └── cd.yml        # The complete CI/CD pipeline for deployment
+├── backend/              # Node.js & Express API source code
+├── frontend/             # React & Tailwind CSS source code
+├── .dockerignore         # Specifies files to ignore in Docker builds
+├── .gitignore            # Specifies files to ignore for Git
+├── CHANGELOG.md          # Manual log of notable changes and releases
+├── docker-compose.yml    # For easy local containerized development
+└── README.md             # This file
+```## 💻 Local Development
+
+The recommended way to run the project locally is with Docker.
+
+### Quick Start with Docker
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/Euwamahoro/proud-citizen.git
     cd proud-citizen
     ```
-
 2.  **Set up Environment Variables:**
-    Create a `.env` file in the root of the project and add the following, filling in your actual values:
+    Create a `.env` file in the root directory (you can copy `.env.example` if it exists) and add your secrets:
     ```
     # Backend environment variables
     MONGO_URI=your_mongodb_connection_string
     JWT_SECRET=your_super_secret_key_for_jwt
-    PORT=5000
+    FRONTEND_URL=http://localhost:5173
     ```
-
-3.  **Build and Run with Docker Compose:**
-    From the root directory, run:
+3.  **Build and Run:**
     ```bash
     docker-compose up --build
     ```
-    The frontend will be available at `http://localhost:3000` and the backend at `http://localhost:5000`.
+4.  **Access the Application:**
+    *   **Frontend:** [http://localhost:5173](http://localhost:5173) (or as specified in `docker-compose.yml`)
+    *   **Backend:** [http://localhost:5000](http://localhost:5000)
 
-### Manually with Node.js
+## 🛠️ Troubleshooting
 
-#### Prerequisites
-- Node.js v18+
-- MongoDB Atlas account or local MongoDB
-- Git
+- **CORS Errors Locally?** Ensure the `FRONTEND_URL` in your `.env` file matches the port your frontend is running on (e.g., `http://localhost:5173`).
+- **MongoDB Connection Fails?** Verify your `MONGO_URI` is correct and your IP address is whitelisted in MongoDB Atlas if applicable.
 
-#### Installation & Setup
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Euwamahoro/proud-citizen.git
-    cd proud-citizen
-    ```
-2.  **Install Backend Dependencies:**
-    ```bash
-    cd backend
-    npm install
-    ```
-3.  **Install Frontend Dependencies:**
-    ```bash
-    cd ../frontend
-    npm install
-    ```
-4.  **Set up Backend Environment:**
-    In the `backend` directory, create a `.env` file with the following:
-    ```
-    MONGO_URI=your_mongodb_connection_string
-    JWT_SECRET=your_super_secret_key_for_jwt
-    PORT=5000
-    ```
-5.  **Run the Applications:**
-    You will need two separate terminals.
-    
-    *In terminal 1 (from the `backend` directory):*
-    ```bash
-    npm start
-    ```
-    *In terminal 2 (from the `frontend` directory):*
-    ```bash
-    npm run dev
-    ```
+## 📜 Changelog
+All notable changes to this project are documented in the **[CHANGELOG.md](CHANGELOG.md)** file.
+
+## 📝 License
+This project is licensed under the MIT License - see the **[LICENSE](LICENSE)** file for details.
