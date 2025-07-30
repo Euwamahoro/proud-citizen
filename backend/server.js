@@ -89,7 +89,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Error Handling Middleware
-app.use((err, req, res, next) => { // <-- Fixed: Added 'next' parameter
+app.use((err, req, res) => { // <-- Fixed: Added 'next' parameter
   // Handle CORS errors specifically
   if (err.message.includes('CORS')) {
     return res.status(403).json({ error: err.message });
