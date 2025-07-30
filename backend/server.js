@@ -55,33 +55,32 @@ const connectWithRetry = (retries = 5, interval = 5000) => {
 
 // --- Middleware ---
 
-// <-- NEW: Define a list of allowed origins for CORS
+// Define a list of allowed origins for CORS
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // Will be set in Azure
-  'http://localhost:3000',  // Common port for local React dev
-  'http://localhost:5173'   // Common port for local Vite dev
-].filter(Boolean); // Filters out any falsy values like undefined
+  process.env.FRONTEND_URL, // Set in Azure
+  'http://localhost:3000',  // For local dev
+  'http://localhost:5173'   // For local dev (Vite)
+].filter(Boolean); // This ensures no undefined values are in the array
 
-// <-- NEW: Create the detailed CORS options object
+// --- IMPORTANT DEBUGGING STEP ---
+console.log('CORS Whitelist - Allowed Origins:', allowedOrigins);
+
+// Create the detailed CORS options object
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like Postman, mobile apps, or curl)
-    if (!origin) return callback(null, true);
-
-    // If the request origin is in our whitelist, allow it
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
+    // Allow requests with no origin (like Postman or curl) or if the origin is in our whitelist
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
     } else {
-      // Otherwise, deny the request
-      return callback(new Error('This origin is not allowed by CORS policy.'));
+      callback(new Error('This origin is not allowed by CORS policy.'));
     }
   },
-  credentials: true, // <-- CRITICAL: This allows the browser to send credentials
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Keep your existing methods
-  allowedHeaders: ['Content-Type', 'Authorization'] // Keep your existing headers
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-// <-- UPDATED: Use the new corsOptions object
+// Use the new corsOptions object
 app.use(cors(corsOptions)); 
 
 app.use(express.json({ limit: '10kb' }));
@@ -89,7 +88,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Error Handling Middleware
-app.use((err, req, res) => { // <-- Fixed: Added 'next' parameter
+app.use((err, req, res) => {
   // Handle CORS errors specifically
   if (err.message.includes('CORS')) {
     return res.status(403).json({ error: err.message });
@@ -115,7 +114,7 @@ app.use('/api/auth', require('./routes/auth'));
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
-  connectWithRetry(); // Initiate DB connection after server starts
+  connectWithRetry();
 });
 
 // Graceful Shutdown
@@ -135,7 +134,6 @@ const shutdown = (signal) => {
       });
   });
 
-  // Force shutdown if not completed in 10 seconds
   setTimeout(() => {
     console.error('Forcing shutdown...');
     process.exit(1);
