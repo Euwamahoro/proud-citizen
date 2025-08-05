@@ -1,7 +1,7 @@
 
 function Dashboard() {
   return (
-    <div>Dashboard features to be implemented soon</div>
+    <div>Dashboard features will be here.</div>
   )
 }
 
