@@ -8,7 +8,7 @@ on:
     branches: [ "main" ]
 
 env:
-  ACR_NAME: proudcitizenacr  # Change this to your ACR name
+  ACR_NAME: proudcitizenacr
   FRONTEND_APP: proudcitizen-frontend-app
   BACKEND_APP: proudcitizen-backend-app
   RESOURCE_GROUP: proudcitizen-rg
