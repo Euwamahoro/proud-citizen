@@ -1,85 +1,96 @@
-/* Main Navbar Container - Perfect Black Theme */
+/* ===============================
+   NAVBAR STYLES - Enhanced Community Platform Look
+   =============================== */
+
+/* Main Navbar Container - Enhanced Black Theme */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2.5rem;
-  background-color: #000000; /* Perfect black background */
-  border-bottom: 1px solid #333333; /* A subtle border for separation */
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  border-bottom: 1px solid #333333;
   position: sticky;
   top: 0;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(255, 255, 255, 0.05);
 }
 
-/* Logo / App Title Styling */
+/* Logo / App Title Styling - More prominent */
 .navbar-logo {
-  font-weight: 700;
-  font-size: 1.75rem;
-  color: #ffffff; /* White text */
+  font-weight: 800;
+  font-size: 1.9rem;
+  color: #ffffff;
   text-decoration: none;
+  letter-spacing: -0.5px;
+  background: linear-gradient(45deg, #ffffff, #f0f0f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
 }
 
 /* Container for the main navigation links */
 .navbar-links {
   display: flex;
-  gap: 2rem;
+  gap: 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Individual Navigation Link Styling */
+/* Individual Navigation Link Styling - More modern */
 .nav-link {
   font-size: 1rem;
-  font-weight: 500;
-  color: #a9a9a9; /* Dim white for non-active links */
+  font-weight: 600;
+  color: #b0b0b0;
   text-decoration: none;
-  padding-bottom: 8px;
+  padding: 0.6rem 1.2rem;
   position: relative;
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 25px;
+  white-space: nowrap;
 }
 
-/* Underline effect on hover */
+/* Remove the old underline effect */
 .nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #ffffff;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 0.3s ease-in-out;
+  display: none;
 }
 
-/* On hover, make the link bright white and show the underline */
+/* Modern hover effect with background */
 .nav-link:hover {
   color: #ffffff;
-}
-.nav-link:hover::after {
-  transform: scaleX(1);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
 
-/* Styling for the active navigation link */
+/* Active link styling - pill-shaped */
 .nav-link.active {
-  color: #ffffff; /* Bright white */
+  color: #000000;
   font-weight: 700;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
 }
 
-/* Hide the hover underline effect for the active link */
-.nav-link.active:hover::after {
-  transform: scaleX(0);
-}
-
-/* Add a permanent underline for the active link */
 .nav-link.active::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #ffffff;
+  display: none;
+}
+
+.nav-link.active:hover {
+  background: #f0f0f0;
+  color: #000000;
+  transform: translateY(-1px);
 }
 
 /* Section for Profile and Sponsor Button */
@@ -89,48 +100,229 @@
   gap: 1.5rem;
 }
 
-/* Sponsor Button - Outlined Style */
+/* Sponsor Button - More modern design */
 .sponsor-button {
-  padding: 0.6rem 1.2rem;
-  background-color: transparent;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
   color: #ffffff;
   text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 25px;
+  font-weight: 700;
   font-size: 0.95rem;
-  border: 2px solid #ffffff; /* White border */
+  border: 2px solid #ffffff;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-/* On hover, fill the button with white and make text black */
+.sponsor-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.sponsor-button:hover::before {
+  left: 0;
+}
+
 .sponsor-button:hover {
-  background-color: #ffffff;
   color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
 }
 
-/* Profile Icon Styling */
+/* Profile Icon Styling - Enhanced */
 .profile-icon {
-  width: 42px;
-  height: 42px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  background-color: #ffffff; /* White background */
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #000000; /* Black text for initials */
-  font-weight: 700; /* Bolder initials */
-  font-size: 1rem;
+  color: #000000;
+  font-weight: 800;
+  font-size: 1.1rem;
   cursor: pointer;
-  border: 2px solid transparent;
-  transition: transform 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
 
 .profile-link:hover .profile-icon {
-  transform: scale(1.1); /* Enlarge on hover */
+  transform: scale(1.15);
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.25);
+  border-color: #ffffff;
 }
 
-/* Responsive Design for Mobile Devices */
+/* ===============================
+   DASHBOARD STYLES - Community Platform Enhanced
+   =============================== */
+
+body {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-container {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.dashboard-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.content-area {
+  padding: 3rem 2.5rem;
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.welcome-header {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 50%, #d0d0d0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+
+.welcome-text {
+  font-size: 1.3rem;
+  color: #b0b0b0;
+  line-height: 1.7;
+  max-width: 800px;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+.dashboard-widgets {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+/* Add some sample widget cards to show the community platform feel */
+.widget-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.widget-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ffffff, transparent, #ffffff);
+  opacity: 0.6;
+}
+
+.widget-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.widget-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.widget-content {
+  color: #b0b0b0;
+  line-height: 1.6;
+}
+
+/* Quick action buttons */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.action-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.action-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.05);
+}
+
+.action-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+}
+
+.action-title {
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.action-description {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -141,13 +333,34 @@
   .navbar-links {
     order: 1;
     width: 100%;
-    justify-content: space-around;
-    padding-top: 1rem;
-    border-top: 1px solid #333333; /* Dark gray border for mobile */
+    justify-content: center;
+    padding: 0.6rem 1rem;
+    margin-top: 1rem;
+    border-top: 1px solid #333333;
+    gap: 1.5rem;
   }
 
   .navbar-profile-section {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .content-area {
+    padding: 2rem 1.5rem;
+  }
+
+  .welcome-header {
+    font-size: 2.5rem;
+  }
+
+  .dashboard-widgets {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .action-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }

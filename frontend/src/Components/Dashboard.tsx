@@ -1,5 +1,5 @@
 import NavBar from './NavBar';
-import './Styles/Dashboard.css'; 
+import './Styles/NavBar.css'; 
 
 const Dashboard = () => {
   // This would come from your Redux store in a real implementation
