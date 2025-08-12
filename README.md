@@ -91,39 +91,7 @@ proud-citizen/
 ├── CHANGELOG.md          # Manual log of notable changes and releases
 ├── docker-compose.yml    # For easy local containerized development
 └── README.md             # This file
-```## 💻 Local Development
+```
+## 💻 Local Development
 
 The recommended way to run the project locally is with Docker.
-
-### Quick Start with Docker
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Euwamahoro/proud-citizen.git
-    cd proud-citizen
-    ```
-2.  **Set up Environment Variables:**
-    Create a `.env` file in the root directory (you can copy `.env.example` if it exists) and add your secrets:
-    ```
-    # Backend environment variables
-    MONGO_URI=your_mongodb_connection_string
-    JWT_SECRET=your_super_secret_key_for_jwt
-    FRONTEND_URL=http://localhost:5173
-    ```
-3.  **Build and Run:**
-    ```bash
-    docker-compose up --build
-    ```
-4.  **Access the Application:**
-    *   **Frontend:** [http://localhost:5173](http://localhost:5173) (or as specified in `docker-compose.yml`)
-    *   **Backend:** [http://localhost:5000](http://localhost:5000)
-
-## 🛠️ Troubleshooting
-
-- **CORS Errors Locally?** Ensure the `FRONTEND_URL` in your `.env` file matches the port your frontend is running on (e.g., `http://localhost:5173`).
-- **MongoDB Connection Fails?** Verify your `MONGO_URI` is correct and your IP address is whitelisted in MongoDB Atlas if applicable.
-
-## 📜 Changelog
-All notable changes to this project are documented in the **[CHANGELOG.md](CHANGELOG.md)** file.
-
-## 📝 License
-This project is licensed under the MIT License - see the **[LICENSE](LICENSE)** file for details.

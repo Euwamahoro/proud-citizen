@@ -3,7 +3,6 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-// Validate required environment variables
 if (!process.env.MONGO_URI) {
   console.error('FATAL: MONGO_URI is not defined');
   process.exit(1);
@@ -63,14 +62,13 @@ const connectWithRetry = (retries = 5, interval = 5000) => {
   });
 };
 
-// --- Middleware ---
 
 // Define a list of allowed origins for CORS
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // Set in Azure
-  'http://localhost:3000',  // For local dev
-  'http://localhost:5173'   // For local dev (Vite)
-].filter(Boolean); // This ensures no undefined values are in the array
+  process.env.FRONTEND_URL,
+  'http://localhost:3000',
+  'http://localhost:5173'
+].filter(Boolean);
 
 // Log the CORS whitelist for debugging
 console.log('CORS Whitelist - Allowed Origins:', allowedOrigins);
