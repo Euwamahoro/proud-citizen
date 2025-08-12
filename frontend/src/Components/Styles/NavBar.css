@@ -1,0 +1,153 @@
+/* Main Navbar Container - Perfect Black Theme */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.5rem;
+  background-color: #000000; /* Perfect black background */
+  border-bottom: 1px solid #333333; /* A subtle border for separation */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Logo / App Title Styling */
+.navbar-logo {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: #ffffff; /* White text */
+  text-decoration: none;
+}
+
+/* Container for the main navigation links */
+.navbar-links {
+  display: flex;
+  gap: 2rem;
+}
+
+/* Individual Navigation Link Styling */
+.nav-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #a9a9a9; /* Dim white for non-active links */
+  text-decoration: none;
+  padding-bottom: 8px;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Underline effect on hover */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #ffffff;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* On hover, make the link bright white and show the underline */
+.nav-link:hover {
+  color: #ffffff;
+}
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Styling for the active navigation link */
+.nav-link.active {
+  color: #ffffff; /* Bright white */
+  font-weight: 700;
+}
+
+/* Hide the hover underline effect for the active link */
+.nav-link.active:hover::after {
+  transform: scaleX(0);
+}
+
+/* Add a permanent underline for the active link */
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #ffffff;
+}
+
+/* Section for Profile and Sponsor Button */
+.navbar-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Sponsor Button - Outlined Style */
+.sponsor-button {
+  padding: 0.6rem 1.2rem;
+  background-color: transparent;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 2px solid #ffffff; /* White border */
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* On hover, fill the button with white and make text black */
+.sponsor-button:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Profile Icon Styling */
+.profile-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #ffffff; /* White background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000000; /* Black text for initials */
+  font-weight: 700; /* Bolder initials */
+  font-size: 1rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.3s ease;
+}
+
+.profile-link:hover .profile-icon {
+  transform: scale(1.1); /* Enlarge on hover */
+}
+
+/* Responsive Design for Mobile Devices */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .navbar-links {
+    order: 1;
+    width: 100%;
+    justify-content: space-around;
+    padding-top: 1rem;
+    border-top: 1px solid #333333; /* Dark gray border for mobile */
+  }
+
+  .navbar-profile-section {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
