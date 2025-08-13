@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, User, Lock } from 'lucide-react';
+import { Eye, EyeOff, User as UserIcon, Lock } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import './Styles/LoginPage.css';
+import './Styles/NavBar.css';
 import { login } from '../Services/authService';
-import { loginStart, loginSuccess, loginFailure, clearError } from '../Store/authSlice';
+import { loginStart, loginFailure, clearError,  loginSuccess } from '../Store/authSlice';
 import type { RootState } from '../Store/index';
 
 export interface LoginFormData {
@@ -22,7 +22,10 @@ const LoginPage: React.FC = () => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading, error, user } = useSelector((state: RootState) => state.auth);
+
+  // Debug log the auth state
+  console.log("🔍 Login Component - Auth State:", { loading, error, user });
 
   // Clear error after 5 seconds
   useEffect(() => {
@@ -61,14 +64,25 @@ const LoginPage: React.FC = () => {
     dispatch(loginStart());
     
     try {
-      const { token } = await login({
+      console.log("📡 Calling login service with:", { 
+        email: formData.email, 
+        password: "***hidden***" 
+      });
+      
+      // Get both token and user from login response
+      const loginResponse = await login({
         email: formData.email,
         password: formData.password
       });
       
-      dispatch(loginSuccess({ token, email: formData.email }));
+      const { token, user } = loginResponse;
+      
+      dispatch(loginSuccess({ token, user }));
+      
       setFormData({ email: '', password: '' });
+      console.log("🎯 Navigating to dashboard...");
       navigate('/dashboard');
+      
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed';
       dispatch(loginFailure(errorMessage));
@@ -76,7 +90,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleRegisterRedirect = () => {
-    navigate("/register" );
+    navigate("/register");
   };
 
   const handleForgotPassword = () => {
@@ -88,7 +102,7 @@ const LoginPage: React.FC = () => {
       <div className="login-card">
         <div className="login-header">
           <div className="login-icon">
-            <User size={24} />
+            <UserIcon size={24} />
           </div>
           <h2 className="login-title">Welcome Back</h2>
           <p className="login-subtitle">Sign in to your account</p>
@@ -104,7 +118,7 @@ const LoginPage: React.FC = () => {
           <div className="form-group">
             <label htmlFor="email" className="form-label">Email</label>
             <div className="input-wrapper">
-              <User className="input-icon" size={20} />
+              <UserIcon className="input-icon" size={20} />
               <input
                 id="email"
                 name="email"

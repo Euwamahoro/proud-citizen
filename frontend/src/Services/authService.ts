@@ -1,10 +1,11 @@
 import axios from 'axios';
+import type { User } from '../Store/authSlice'; // Import User interface
 
 // Secure environment handling
+// const BASE_URL = 'http://localhost:5000'; 
+
 const BASE_URL = import.meta.env.VITE_API_URL || 'https://proudcitizen-backend-app.grayisland-c2f3c413.eastus2.azurecontainerapps.io';
 const API_URL = `${BASE_URL}/api/auth`.replace(/([^:]\/)\/+/g, '$1');
-
-console.log('API Endpoint:', `${API_URL}/login`);
 
 
 interface RegisterData {
@@ -37,14 +38,19 @@ export const login = async (userData: LoginData) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      transformRequest: [(data) => JSON.stringify(data)],
       withCredentials: true
     });
-    
+      console.log('Full login response:', response.data); // Keep for debugging
+
     if (response.data.token) {
       storeToken(response.data.token);
     }
-    return response.data;
+    
+    // Return both token and user data
+    return {
+      token: response.data.token,
+      user: response.data.user as User // Cast to User type
+    };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const errorMsg = error.response?.data?.msg || 
@@ -58,6 +64,26 @@ export const login = async (userData: LoginData) => {
       throw new Error(errorMsg);
     }
     throw new Error('Network error during login');
+  }
+};
+
+export const fetchUserProfile = async () => {
+  const token = getToken(); // Get token from localStorage
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const response = await axios.get(`${API_URL}/me`, {
+      headers: {
+        'x-auth-token': token // Pass token in the header
+      }
+    });
+    return response.data; // This will be the user object
+  } catch (error) {
+    console.error('Failed to fetch user profile', error);
+    removeToken(); // Token might be invalid, so clear it
+    return null;
   }
 };
 
