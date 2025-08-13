@@ -70,10 +70,7 @@ const allowedOrigins = [
   'http://localhost:5173'
 ].filter(Boolean);
 
-// Log the CORS whitelist for debugging
-console.log('CORS Whitelist - Allowed Origins:', allowedOrigins);
 
-// Create the detailed CORS options object
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (like Postman or curl) or if the origin is in our whitelist
@@ -85,7 +82,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
 };
 
 // Use the new corsOptions object

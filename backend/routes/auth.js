@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const authMiddleware = require('../middleware/authMiddleware');
 require('dotenv').config();
 
 // @route   POST api/auth/register
@@ -12,7 +13,6 @@ router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ 
@@ -27,13 +27,11 @@ router.post('/register', async (req, res) => {
       password,
     });
 
-    // Encrypt password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
 
-    // Create and return jsonwebtoken
     const payload = { user: { id: user.id } };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
@@ -53,12 +51,25 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// @route   POST api/auth/login
-// @desc    Authenticate user & get token
-// @access  Public
+// @route   GET api/auth/me
+// @desc    Get logged in user data
+// @access  Private
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route POST api/auth/login
+// @desc Authenticate user & get token
+// @access Public
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
+  
   try {
     // Check for user
     let user = await User.findOne({ email });
@@ -72,12 +83,26 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ msg: 'Invalid Credentials' });
     }
 
-    // Create and return jsonwebtoken
-    const payload = { user: { id: user.id, username: user.username } };
+    // Create the JWT payload
+    const payload = {
+      user: { 
+        id: user.id, 
+        username: user.username 
+      }
+    };
 
+    // Sign the token
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
-      res.json({ token });
+      res.json({ 
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          profilePicture: null 
+        }
+      });
     });
   } catch (err) {
     console.error(err.message);
